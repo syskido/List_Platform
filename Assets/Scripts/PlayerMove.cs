@@ -3,6 +3,7 @@ using UnityEngine;
 public class PlayerMove : MonoBehaviour
 {
     public float maxSpeed;
+    public float jumpPower;
     Rigidbody2D rigid;
     SpriteRenderer spriteRenderer;
     Animator animator;
@@ -16,16 +17,22 @@ public class PlayerMove : MonoBehaviour
 
     private void Update()
     {
+        //Jump
+        if (Input.GetButtonDown("Jump"))
+            rigid.AddForce(Vector2.up * jumpPower, ForceMode2D.Impulse);
+            animator.SetBool("isJumping", true);
+
         //Stop Speed
         if (Input.GetButtonUp("Horizontal")) {            
             rigid.velocity = new Vector2(rigid.velocity.normalized.x*0.5f, rigid.velocity.y);            
         }
 
         //Direction Sprite
+        if(Input.GetButtonDown("Horizontal"))
         spriteRenderer.flipX = Input.GetAxisRaw("Horizontal") == -1;
 
         //Animation
-        if (rigid.velocity.normalized.x == 0)
+        if (Mathf.Abs(rigid.velocity.x) < 0.3)
             animator.SetBool("isWalking", false);
         else
             animator.SetBool("isWalking", true);
