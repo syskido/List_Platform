@@ -1,18 +1,18 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class PlayerMove : MonoBehaviour
-{
-    // Start is called before the first frame update
-    void Start()
+{    
+    Rigidbody2D rigid;
+
+    private void Awake()
     {
-        
+        rigid = GetComponent<Rigidbody2D>();
     }
 
-    // Update is called once per frame
-    void Update()
+    private void FixedUpdate()
     {
-        
+        float h = Input.GetAxisRaw("Horizontal");
+
+        rigid.AddForce(Vector2.right * h, ForceMode2D.Impulse);
     }
 }
