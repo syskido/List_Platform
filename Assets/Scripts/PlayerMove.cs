@@ -4,10 +4,12 @@ public class PlayerMove : MonoBehaviour
 {
     public float maxSpeed;
     Rigidbody2D rigid;
+    SpriteRenderer spriteRenderer;
 
     private void Awake()
     {
         rigid = GetComponent<Rigidbody2D>();
+        spriteRenderer = GetComponent<SpriteRenderer>();
     }
 
     private void Update()
@@ -15,6 +17,10 @@ public class PlayerMove : MonoBehaviour
         if (Input.GetButtonUp("Horizontal")) {            
             rigid.velocity = new Vector2(rigid.velocity.normalized.x*0.5f, rigid.velocity.y);            
         }
+
+        //Direction Sprite
+        spriteRenderer.flipX = Input.GetAxisRaw("Horizontal") == -1;
+
     }
 
     private void FixedUpdate()
