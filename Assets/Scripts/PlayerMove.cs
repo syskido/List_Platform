@@ -6,15 +6,14 @@ public class PlayerMove : MonoBehaviour
     public float jumpPower;
     Rigidbody2D rigid;
     SpriteRenderer spriteRenderer;
-    Animator animator;
-    
-
+    Animator animator;    
 
     private void Awake()
     {
         rigid = GetComponent<Rigidbody2D>();
         spriteRenderer = GetComponent<SpriteRenderer>();
         animator = GetComponent<Animator>();
+
 
     }
 
@@ -65,5 +64,64 @@ public class PlayerMove : MonoBehaviour
                     animator.SetBool("isJumping", false);
             }
         }
+    }
+    void OnCollisionEnter2D(Collision2D collision)
+    {
+        if (collision.gameObject.tag == "Enemy") {
+            //Attack
+            if(rigid.velocity.y < 0 && transform.position.y > collision.transform.position.y) {
+                OnAttack(collision.transform);
+            }
+            else //Damaged
+                OnDamaged(collision.transform.position);
+        }        
+    }
+
+    void OnTriggerEnter2D(Collider2D collision)
+    {
+        if (collision.gameObject.tag == "Item") {
+            // Point
+
+            // Deactive Item
+            collision.gameObject.SetActive(false);
+
+        }
+    }
+
+    void OnAttack(Transform enemy)
+    {
+        // Point
+
+        // Reaction Force
+        rigid.AddForce(Vector2.up * 10, ForceMode2D.Impulse);
+
+        // Enemy Die
+        EnemyMove enemyMove = enemy.GetComponent<EnemyMove>();
+        enemyMove.OnDamaged();
+    }
+
+    void OnDamaged(Vector2 targetPos)
+    {
+        // Change Layer (Immortal Active)
+        gameObject.layer = 11;
+
+        //View Alpha
+        spriteRenderer.color = new Color(1, 1, 1, 0.4f);
+
+        // Reaction Force
+        int dirc = transform.position.x - targetPos.x > 0 ? 1 : -1;
+        rigid.AddForce(new Vector2(dirc, 1)*7 ,ForceMode2D.Impulse);
+
+        //Animation
+        animator.SetTrigger("doDamaged");
+
+
+        Invoke("OffDamaged", 3);        
+    }
+
+    void OffDamaged()
+    {
+        gameObject.layer = 10;
+        spriteRenderer.color = new Color(1, 1, 1, 1);
     }
 }
