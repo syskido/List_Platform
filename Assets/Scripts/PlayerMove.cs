@@ -6,6 +6,7 @@ public class PlayerMove : MonoBehaviour
     public float maxSpeed;
     public float jumpPower;
     Rigidbody2D rigid;
+    CapsuleCollider2D capsuleCollider;
     SpriteRenderer spriteRenderer;
     Animator animator;    
 
@@ -14,6 +15,7 @@ public class PlayerMove : MonoBehaviour
         rigid = GetComponent<Rigidbody2D>();
         spriteRenderer = GetComponent<SpriteRenderer>();
         animator = GetComponent<Animator>();
+        capsuleCollider = GetComponent<CapsuleCollider2D>();
     }
 
     private void Update()
@@ -104,7 +106,7 @@ public class PlayerMove : MonoBehaviour
     void OnAttack(Transform enemy)
     {
         // Point
-       gameManager.stagePoint += 100;
+        gameManager.stagePoint += 100;
         // Reaction Force
         rigid.AddForce(Vector2.up * 10, ForceMode2D.Impulse);
 
@@ -116,7 +118,7 @@ public class PlayerMove : MonoBehaviour
     void OnDamaged(Vector2 targetPos)
     {
         //Health Down
-        //gameManager.health--;
+        gameManager.HealthDown();
 
         // Change Layer (Immortal Active)
         gameObject.layer = 11;
@@ -139,5 +141,30 @@ public class PlayerMove : MonoBehaviour
     {
         gameObject.layer = 10;
         spriteRenderer.color = new Color(1, 1, 1, 1);
+    }
+
+    public void OnDie()
+    {
+        //Sprite Alpha
+        spriteRenderer.color = new Color(1, 1, 1, 0.4f);
+
+        //Sprite Flip Y
+        spriteRenderer.flipX = true;
+
+        //Collider Disable
+        capsuleCollider.enabled = false;
+
+        //Die Effect Jump
+        rigid.AddForce(Vector2.up * 5, ForceMode2D.Impulse);
+    }
+    
+    public void VelocityZero()
+    {
+        rigid.velocity = Vector2.zero;
+    }
+
+    public void UIRestartBtn()
+    {
+        rigid.velocity = Vector2.zero;
     }
 }
